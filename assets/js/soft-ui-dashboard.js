@@ -24,7 +24,13 @@
       var ps3 = new PerfectScrollbar(fixedplugin);
     };
   };
-})();
+})
+
+();
+
+function check_npn(){
+  
+}
 
 // Verify navbar blur on scroll
 if (document.getElementById('navbarBlur')) {
