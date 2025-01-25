@@ -8,7 +8,7 @@
     <link rel="icon" type="image/png" href="../assets/img/vipa-icon.png">
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
+    
     <title>
         VIPA - CallX Scheduling
     </title>
@@ -24,6 +24,9 @@
     <!-- Nepcha Analytics (nepcha.com) -->
     <!-- Nepcha is a easy-to-use web analytics. No cookies and fully compliant with GDPR, CCPA and PECR. -->
     <script defer data-site="YOUR_DOMAIN_HERE" src="https://api.nepcha.com/js/nepcha-analytics.js"></script>
+    
+    <!-- Unlock later -->
+    <script src="../assets/js/callx_booking.js"></script>
 </head>
 
 <body class="g-sidenav-show bg-gray-100">
@@ -90,27 +93,29 @@
 
     <!-- This is the start of the page content -->
     <div class="main-content position-relative max-height-vh-100 h-100">
-        
-        <div id="npn_authenticator_form"class="d-flex justify-content-center mb-3 h-100">
-            <div class="card w-40 m-auto">
-                <div class="card-body p-3">
-                    <div class="row">
-                        <div class="col-lg-6">
-                            <div class="d-flex flex-column h-100">
-                                <p class="mb-1 pt-2 text-bold">Built by developers</p>
-                                <h5 class="font-weight-bolder">Soft UI Dashboard</h5>
-                                <p class="mb-5">From colors, cards, typography to complex elements, you will find the full documentation.</p>
-                                <a class="text-body text-sm font-weight-bold mb-0 icon-move-right mt-auto" href="javascript:;">
-                                    Read More
-                                    <i class="fas fa-arrow-right text-sm ms-1" aria-hidden="true"></i>
-                                </a>
+
+        <!-- Authentication page -->
+        <div id="page-npn-authenticate" class="min-vh-75 d-none">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xl-4 col-lg-5 col-md-6 d-flex flex-column mx-auto">
+                        <div class="card card-plain mt-8">
+                            <div class="card-header pb-0 text-left bg-transparent">
+                                <h3 class="font-weight-bolder text-info text-gradient">Welcome to CallX Scheduling</h3>
+                                <p class="mb-0">Please enter your NPN # to access the page.</p>
                             </div>
-                        </div>
-                        <div class="col-lg-5 ms-auto text-center mt-5 mt-lg-0">
-                            <div class="bg-primary border-radius-lg h-100">
-                                <img src="../assets/img/shapes/waves-white.svg" class="position-absolute h-100 w-50 top-0 d-lg-block d-none" alt="waves">
-                                <div class="position-relative d-flex align-items-center justify-content-center h-100">
-                                    <img class="w-100 position-relative z-index-2 pt-4" src="../assets/img/illustrations/rocket-white.png" alt="rocket">
+                            <div class="card-body">
+                                <form role="form">
+                                    <label>National Producers Number*</label>
+                                    <div class="mb-3">
+                                        <input id="inputNPN" type="text" class="form-control" placeholder="225****">
+                                    </div>
+                                    <div class="text-center">
+                                        <button id="authenticate_npn" type="button" class="btn bg-gradient-info w-100 mt-4 mb-0">Sign in</button>
+                                    </div>
+                                </form>
+                                <div>
+                                    <p id="error_message" stye="color:red;"></p>
                                 </div>
                             </div>
                         </div>
@@ -119,13 +124,14 @@
             </div>
         </div>
 
-        <div id="booking_content" class="d-none">
+        <!-- Booking content -->
+        <div id="booking_content" class="">
             <!-- Header Container -->
         <div class="container-fluid">
             <div class="page-header min-height-200 border-radius-lg mt-4 d-flex flex-column justify-content-end">
                 <span class="mask bg-primary opacity-9"></span>
                 
-                <!-- Top Navbar -->
+                <!-- Breadcrumb -->
                 <nav class="navbar navbar-main navbar-expand-lg bg-transparent shadow-none w-100">
                     <div class="container-fluid">
                         <nav aria-label="breadcrumb">
@@ -154,8 +160,9 @@
                         </div>
                     </div>
                 </nav>
-                <!-- End Top Navbar -->
-
+                <!-- Breadcrumb -->
+                
+                <!-- Dynamic Agent Info -->
                 <div class="w-100 position-relative p-3">
                     <div class="d-flex justify-content-between align-items-end">
                         <div class="d-flex align-items-center">
@@ -167,138 +174,148 @@
                                 Agent Name
                                 </h5>
                                 <p class="mb-0 text-white text-sm">
-                                Agent / User
+                                <span id="user_type">Agent</span> / ID: <span id="npn_id">NPN Number</span>
                                 </p>
                             </div>
                         </div>   
                     </div>
                 </div>
+                <!-- Dynamic Agent Info -->
             </div>
         </div>
         <!-- End Header Container -->
 
-        <!-- Second Section -->
+        <!-- MAIN -->
+        <!-- Dynamic Section -->
         <div class="container-fluid py-4">
             <div class="row">
-                <div class="col-12 col-xl-4">
-                    <div class="card h-100">
-                        <div class="card-header pb-0 p-3">
-                            <h6 class="mb-0">Platform Settings</h6>
-                        </div>
-                        <div class="card-body p-3">
-                            <h6 class="text-uppercase text-body text-xs font-weight-bolder">Account</h6>
-                            <ul class="list-group">
-                                <li class="list-group-item border-0 px-0">
-                                    <div class="form-check form-switch ps-0">
-                                        <input class="form-check-input ms-auto" type="checkbox" id="flexSwitchCheckDefault" checked>
-                                        <label class="form-check-label text-body ms-3 text-truncate w-80 mb-0" for="flexSwitchCheckDefault">Email me when someone follows me</label>
+                <!-- col 1 -->
+                <div class="col-lg-8">
+                    <div class="row">
+                        <div class="col-md-12 mb-lg-0 mb-4">
+                            <div class="card mt-4">
+                                <div class="card-header pb-0 p-3">
+                                    <div class="row">
+                                        <div class="col-6 d-flex align-items-center">
+                                            <h6 class="mb-0">Available Schedules</h6>
+                                            
+                                        </div>
+                                        <div class="col-6 text-end">
+                                            <a id="avail_refresh" class="btn bg-gradient-dark mb-0" href="javascript:;">Refresh</a>
+                                        </div>
                                     </div>
-                                </li>
-                                <li class="list-group-item border-0 px-0">
-                                    <div class="form-check form-switch ps-0">
-                                        <input class="form-check-input ms-auto" type="checkbox" id="flexSwitchCheckDefault1">
-                                        <label class="form-check-label text-body ms-3 text-truncate w-80 mb-0" for="flexSwitchCheckDefault1">Email me when someone answers on my post</label>
-                                    </div>
-                                </li>
-                                <li class="list-group-item border-0 px-0">
-                                    <div class="form-check form-switch ps-0">
-                                        <input class="form-check-input ms-auto" type="checkbox" id="flexSwitchCheckDefault2" checked>
-                                        <label class="form-check-label text-body ms-3 text-truncate w-80 mb-0" for="flexSwitchCheckDefault2">Email me when someone mentions me</label>
-                                    </div>
-                                </li>
-                            </ul>
-                            <h6 class="text-uppercase text-body text-xs font-weight-bolder mt-4">Application</h6>
-                            <ul class="list-group">
-                                <li class="list-group-item border-0 px-0">
-                                    <div class="form-check form-switch ps-0">
-                                        <input class="form-check-input ms-auto" type="checkbox" id="flexSwitchCheckDefault3">
-                                        <label class="form-check-label text-body ms-3 text-truncate w-80 mb-0" for="flexSwitchCheckDefault3">New launches and projects</label>
-                                    </div>
-                                </li>
-                                <li class="list-group-item border-0 px-0">
-                                    <div class="form-check form-switch ps-0">
-                                        <input class="form-check-input ms-auto" type="checkbox" id="flexSwitchCheckDefault4" checked>
-                                        <label class="form-check-label text-body ms-3 text-truncate w-80 mb-0" for="flexSwitchCheckDefault4">Monthly product updates</label>
-                                    </div>
-                                </li>
-                                <li class="list-group-item border-0 px-0 pb-0">
-                                    <div class="form-check form-switch ps-0">
-                                        <input class="form-check-input ms-auto" type="checkbox" id="flexSwitchCheckDefault5">
-                                        <label class="form-check-label text-body ms-3 text-truncate w-80 mb-0" for="flexSwitchCheckDefault5">Subscribe to newsletter</label>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12 col-xl-4">
-                    <div class="card h-100">
-                        <div class="card-header pb-0 p-3">
-                            <div class="row">
-                                <div class="col-md-8 d-flex align-items-center">
-                                    <h6 class="mb-0">Profile Information</h6>
+                                    <div>
+                                        <p class="text-xs">Please refresh table every now and then to get accurate availabilites. Hurry before it runs out!</p>
+                                    </div> 
                                 </div>
-                                <div class="col-md-4 text-end">
-                                    <a href="javascript:;">
-                                        <i class="fas fa-user-edit text-secondary text-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Profile"></i>
-                                    </a>
+
+                                <div class="card-body p-3">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-md-0 mb-4">
+                                            <div class="card-body pt-4 p-3">
+                                                <h6 class="text-s">Morning Shift</h6>
+                                                <ul id="availAMsched" class="list-group">
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="card-body pt-4 p-3">
+                                                <h6 class="text-s">Afternoon Shift</h6>
+                                                <ul id="availPMsched" class="list-group">
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="card-body p-3">
-                            <p class="text-sm">
-                                Hi, I’m Alec Thompson, Decisions: If you can’t decide, the answer is no. If two equally difficult paths, choose the one more painful in the short term (pain avoidance is creating an illusion of equality).
-                            </p>
-                            <ul class="list-group">
-                                <li class="list-group-item border-0 ps-0 pt-0 text-sm"><strong class="text-dark">Full Name:</strong> &nbsp; Alec M. Thompson</li>
-                                <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Mobile:</strong> &nbsp; (44) 123 1234 123</li>
-                                <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Email:</strong> &nbsp; alecthompson@mail.com</li>
-                                <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Location:</strong> &nbsp; USA</li>
-                                </li>
-                            </ul>
-                        </div>
                     </div>
                 </div>
-                <div class="col-12 col-xl-4">
+
+                <!-- col 2 -->
+                <div class="col-lg-4">
                     <div class="card h-100">
                         <div class="card-header pb-0 p-3">
-                            <h6 class="mb-0">My Reservations</h6>
+                            <div class="row">
+                                <div class="col-6 d-flex align-items-center">
+                                    <h6 class="mb-0">My Reservations</h6>
+                                </div>
+                                <div class="col-6 text-end">
+                                    <button id="persRes_refresh" class="btn btn-outline-primary btn-sm mb-0">Refresh</button>
+                                </div>
+                            </div>
                         </div>
-                        <div class="card-body p-3">
-                            <ul class="list-group">
-                                <li class="list-group-item border-0 d-flex align-items-center px-0 mb-2">
-                                    <div class="avatar me-3">
-                                        <img src="../assets/img/calendar-icon.jpg" alt="kal" class="border-radius-lg shadow">
-                                    </div>
-                                    <div class="d-flex align-items-start flex-column justify-content-center">
-                                        <h6 class="mb-0 text-sm">This will be the date</h6>
-                                        <p class="mb-0 text-xs">This will be the time</p>
-                                    </div>
-                                    <a class="btn btn-link pe-3 ps-0 mb-0 ms-auto" href="javascript:;">Cancel</a>
-                                </li>
+
+                        <div class="card-body p-3 pb-0">
+                            <ul id="myReservation" class="list-group">
                             </ul>
                         </div>
                     </div>
                 </div>
             </div>
-            <footer class="footer pt-3  ">
-                <div class="container-fluid">
-                    <div class="row align-items-center justify-content-lg-between">
-                        <div class="col-lg-6 mb-lg-0 mb-4">
-                            <div class="copyright text-center text-sm text-muted text-lg-start">
-                                © <script>
-                                    document.write(new Date().getFullYear())
-                                </script>
-                                , Developed by
-                                <a class="font-weight-bold" target="_blank">Simplywork CRM</a>
-                                for a better web.
+        </div>
+        <!-- End Dynamic section -->
+
+        <!-- table list section -->
+        <div class="container-fluid py-4">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card mb-4">
+                        <div class="card-header pb-0">
+                            <h6>Authors table</h6>
+                        </div>
+                        <div class="card-body px-0 pt-0 pb-2">
+                            <div class="table-responsive p-0">
+                                <table class="table align-items-center mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Author</th>
+                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Function</th>
+                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
+                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Employed</th>
+                                            <th class="text-secondary opacity-7"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex px-2 py-1">
+                                                    <div>
+                                                        <img src="../assets/img/team-2.jpg" class="avatar avatar-sm me-3" alt="user1">
+                                                    </div>
+                                                    <div class="d-flex flex-column justify-content-center">
+                                                        <h6 class="mb-0 text-sm">John Michael</h6>
+                                                        <p class="text-xs text-secondary mb-0">john@creative-tim.com</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <p class="text-xs font-weight-bold mb-0">Manager</p>
+                                                <p class="text-xs text-secondary mb-0">Organization</p>
+                                            </td>
+                                            <td class="align-middle text-center text-sm">
+                                                <span class="badge badge-sm bg-gradient-success">Online</span>
+                                            </td>
+                                            <td class="align-middle text-center">
+                                                <span class="text-secondary text-xs font-weight-bold">23/04/18</span>
+                                            </td>
+                                            <td class="align-middle">
+                                                <a href="javascript:;" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
+                                                    Edit
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
                 </div>
-            </footer>
+            </div>
         </div>
-        <!-- end Second Section -->
+        <!-- End table list -->
+
+        <!-- end MAIN -->
         </div>
         
     </div>

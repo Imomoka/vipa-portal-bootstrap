@@ -1,0 +1,351 @@
+window.addEventListener("DOMContentLoaded", (event) => {
+    const npn_submit = document.getElementById('authenticate_npn');
+    if (npn_submit) {
+      npn_submit.addEventListener('click', check_npn);
+    }
+    const refresh_avail = document.getElementById('avail_refresh');
+    if (refresh_avail){
+        refresh_avail.addEventListener('click', avail_refresh);
+    }
+    const refresh_persRes = document.getElementById('persRes_refresh');
+    if (refresh_persRes){
+        refresh_persRes.addEventListener('click', persRes_refresh);
+    }
+});
+
+// Run automatically on page load if NPN exists in localStorage
+document.addEventListener("DOMContentLoaded", () => {
+    const storedNpn = localStorage.getItem("npn");
+    if (storedNpn) {
+        fetchAgentData(storedNpn);
+    }
+
+});
+
+//Manual Authenticate NPN Process
+function check_npn(){
+  var npninput= document.getElementById('inputNPN').value;
+  console.log(npninput);
+  fetchAgentData(npninput);
+}    
+function fetchAgentData(npn){
+    const requestOptions = {
+        method: "GET",
+        redirect: "follow"
+        };
+    
+        fetch(`https://api1.simplyworkcrm.com/api:Y0n8xNqT/integration/npn/{npn_number}?npn=${npn}`, requestOptions)
+            .then(response => response.json()) // Convert response to JSON
+            .then(data => {
+                console.log(data); // Log the full response for debugging
+    
+                // Check if response contains an error
+                if (data.code && data.message) {
+                    document.getElementById("error_message").textContent = data.message;
+                    document.getElementById("callx_user").textContent = ""; // Clear agent name if invalid npn
+                    localStorage.clear("npn");
+                } else if (data.agent_name) {
+    
+                    // Display agent name if valid response
+                    document.getElementById("callx_user").textContent = data.agent_name;
+                    document.getElementById("error_message").textContent = ""; // Clear any previous error
+                    document.getElementById('user_type').textContent = data.user_type;
+                    document.getElementById('npn_id').textContent = npn;
+                    document.getElementById('booking_content').classList.remove("d-none");
+                    document.getElementById('page-npn-authenticate').classList.add("d-none");
+                    localStorage.setItem("npn",npn);
+                    fetchAvailsched(npn);
+                    fetchPersRes(npn);
+                } else {
+                    // Handle unexpected response format
+                    document.getElementById("error_message").textContent = "Unexpected response received.";
+                    document.getElementById("callx_user").textContent = "";
+                }
+            })
+            .catch(error => {
+                console.error("Error fetching data:", error);
+                document.getElementById("error_message").textContent = "Error fetching data. Please try again.";
+                document.getElementById("agent_name").textContent = ""; // Clear agent name on error
+            });
+}
+//refresh availability schedule
+function avail_refresh(){
+    const storedNpn = localStorage.getItem("npn");
+    fetchAvailsched(storedNpn);
+}
+//fetch all Availabilities
+function fetchAvailsched(npn){
+    const requestOptions = {
+        method: "GET",
+        redirect: "follow"
+        };
+    
+        fetch(`https://api1.simplyworkcrm.com/api:Y0n8xNqT/bookings/calls/availability?npn=${npn}`, requestOptions)
+            .then(response => response.json()) // Convert response to JSON
+            .then(data => {
+                console.log(data); // Log the full response for debugging
+    
+                // Check if response contains an error
+                if (data.code && data.message) {
+                    console.log("An Error has occured, please contact dev.")
+                } else if (data.current_week_day) {
+    
+                    // Preview Available Slots
+                    previewAvailsched(data.availability,npn);
+                    
+                } else {
+                    // Handle unexpected response format
+                    console.log("Unexpected error received")
+                }
+            })
+            .catch(error => {
+                console.error("Error fetching data:", error);    
+            });
+}
+//preview Availabilities
+function previewAvailsched(availsched,npn){
+    //format data
+    const amList = document.getElementById("availAMsched");
+    amList.innerHTML='';
+    const pmList = document.getElementById("availPMsched");
+    pmList.innerHTML='';
+
+    availsched.forEach(availsched => {
+
+        //check if morning shift
+        if(availsched.shift==1){
+            if(availsched.remaining_slots!=0){
+                //checks if not yet booked
+                if(availsched.already_scheduled != true){
+                    const am_list = document.createElement('li');
+                    am_list.className='list-group-item border-0 d-flex p-4 mb-2 bg-gray-100 border-radius-lg';
+                    am_list.innerHTML = `
+                        <div class="d-flex flex-column">
+                            <h6 class="text-s">${availsched.date}</h6>
+                            <span class="text-xs">Available Slot: <span class="text-dark ms-sm-2 font-weight-bold">${availsched.remaining_slots}</span></span>
+                        </div>
+                        <div class="ms-auto">
+                            <a class="btn bg-gradient-primary" href="javascript:;" onClick="bookSlot('${availsched.date}','${npn}','1')">Reserve</a>
+                        </div>`;
+                amList.appendChild(am_list);
+                }else{
+                    const am_list = document.createElement('li');
+                    am_list.className='list-group-item border-0 d-flex p-4 mb-2 bg-gray-100 border-radius-lg';
+                    am_list.innerHTML = `
+                        <div class="d-flex flex-column">
+                            <h6 class="text-s">${availsched.date}</h6>
+                            <span class="text-xs">Available Slot: <span class="text-dark ms-sm-2 font-weight-bold">${availsched.remaining_slots}</span></span>
+                        </div>
+                        <div class="ms-auto">
+                            <a class="btn bg-gradient-success" href="javascript:;">Booked</a>
+                        </div>`;
+                    amList.appendChild(am_list);
+                }
+                
+            }else{
+                const am_list = document.createElement('li');
+                am_list.className='list-group-item border-0 d-flex p-4 mb-2 bg-gray-100 border-radius-lg';
+                am_list.innerHTML = `
+                    <div class="d-flex flex-column">
+                        <h6 class="text-s">${availsched.date}</h6>
+                        <span class="text-xs">Available Slot: <span class="text-dark ms-sm-2 font-weight-bold">Fully Booked</span></span>
+                    </div>
+                    <div class="ms-auto">
+                    <a class="btn bg-gradient-danger" href="javascript:;">Full</a>
+                    </div>`;
+                amList.appendChild(am_list);
+            }
+        }
+
+        //check if PM shift
+        else if(availsched.shift==2){
+            if(availsched.remaining_slots!=0){
+                //checks if not yet booked
+                if(availsched.already_scheduled != true){
+                    const pm_list = document.createElement('li');
+                    pm_list.className='list-group-item border-0 d-flex p-4 mb-2 bg-gray-100 border-radius-lg';
+                    pm_list.innerHTML = `
+                        <div class="d-flex flex-column">
+                            <h6 class="text-s">${availsched.date}</h6>
+                            <span class="text-xs">Available Slot: <span class="text-dark ms-sm-2 font-weight-bold">${availsched.remaining_slots}</span></span>
+                        </div>
+                        <div class="ms-auto">
+                            <a class="btn bg-gradient-primary" href="javascript:;" onClick="bookSlot('${availsched.date}','${npn}','2')">Reserve</a>
+                        </div>`;
+                pmList.appendChild(pm_list);
+                }else{
+                    const pm_list = document.createElement('li');
+                    pm_list.className='list-group-item border-0 d-flex p-4 mb-2 bg-gray-100 border-radius-lg';
+                    pm_list.innerHTML = `
+                        <div class="d-flex flex-column">
+                            <h6 class="text-s">${availsched.date}</h6>
+                            <span class="text-xs">Available Slot: <span class="text-dark ms-sm-2 font-weight-bold">${availsched.remaining_slots}</span></span>
+                        </div>
+                        <div class="ms-auto">
+                            <a class="btn bg-gradient-success" href="javascript:;">Booked</a>
+                        </div>`;
+                    pmList.appendChild(pm_list);
+                }
+                
+            }else{
+                const pm_list = document.createElement('li');
+                pm_list.className='list-group-item border-0 d-flex p-4 mb-2 bg-gray-100 border-radius-lg';
+                pm_list.innerHTML = `
+                    <div class="d-flex flex-column">
+                        <h6 class="text-s">${availsched.date}</h6>
+                        <span class="text-xs">Available Slot: <span class="text-dark ms-sm-2 font-weight-bold">Fully Booked</span></span>
+                    </div>
+                    <div class="ms-auto">
+                    <a class="btn bg-gradient-danger" href="javascript:;">Full</a>
+                    </div>`;
+                pmList.appendChild(pm_list);
+            }
+        }
+        
+        
+    });
+}
+//book a slot
+function bookSlot(date,npn,shift){
+    const requestOptions = {
+        method: "POST",
+        redirect: "follow"
+    };
+
+    fetch(`https://api1.simplyworkcrm.com/api:Y0n8xNqT/bookings/calls/schedules?npn=${npn}&shift=${shift}&schedule_date=${date}`, requestOptions)
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    return response.json();
+  })
+  .then(data => {
+    console.log(data);
+
+    // Example response handling
+    if (data.code && data.message) {
+      console.log("An error has occurred, please contact dev.");
+    } else {
+      // Handle success case
+      console.log("Success:", data);
+      fetchAvailsched(npn);
+      fetchPersRes(npn);
+    }
+  })
+  .catch(error => {
+    console.error("Error fetching data:", error);
+  });
+    
+}
+
+//refresh personal schedule
+function persRes_refresh(){
+    const storedNpn = localStorage.getItem("npn");
+    fetchPersRes(storedNpn);
+}
+//fetch own reservation
+function fetchPersRes(npn){
+    const requestOptions = {
+        method: "GET",
+        redirect: "follow"
+        };
+    
+        fetch(`https://api1.simplyworkcrm.com/api:Y0n8xNqT/bookings/calls/schedules?limit=10&npn=${npn}&view_all=false&from_today=true&groups[logic]=string&groups[conditions][field]=string&groups[conditions][op]=string&groups[conditions][value]=string`, requestOptions)
+            .then(response => response.json()) // Convert response to JSON
+            .then(data => {
+                console.log(data); // Log the full response for debugging
+    
+                // Check if response contains an error
+                if (data.code) {
+                    console.log("An Error has occured, please contact dev.")
+                } else if (data.items) {
+    
+                    // Preview Available Slots
+                    previewPersRes(data.items,npn);
+                    
+                } else {
+                    // Handle unexpected response format
+                    console.log("Unexpected error received")
+                }
+            })
+            .catch(error => {
+                console.error("Error fetching data:", error);    
+            });
+}
+
+function previewPersRes(persRes,npn){
+    //format data
+    const resList = document.getElementById("myReservation");
+    resList.innerHTML='';
+
+    persRes.forEach(persRes => {
+        if(persRes.shift==1){
+            const persRes_list = document.createElement('li');
+            persRes_list.className='list-group-item border-0 d-flex align-items-center px-0 mb-2';
+            persRes_list.innerHTML = `
+                <div class="avatar me-3">
+                    <img src="../assets/img/calendar-icon.jpg" alt="kal" class="border-radius-lg shadow">
+                </div>
+                <div class="d-flex align-items-start flex-column justify-content-center">
+                    <h6 class="mb-0 text-sm">${persRes.date}</h6>
+                    <p class="mb-0 text-xs">Shift: Morning</p>
+                </div>
+                <a class="btn btn-link pe-3 ps-0 mb-0 ms-auto" href="javascript:;" onClick="delete_persRes('${persRes.id}','${npn}')">Cancel</a>`;
+                resList.appendChild(persRes_list);
+            }
+            else{
+                const persRes_list = document.createElement('li');
+            persRes_list.className='list-group-item border-0 d-flex align-items-center px-0 mb-2';
+            persRes_list.innerHTML = `
+                <div class="avatar me-3">
+                    <img src="../assets/img/calendar-icon.jpg" alt="kal" class="border-radius-lg shadow">
+                </div>
+                <div class="d-flex align-items-start flex-column justify-content-center">
+                    <h6 class="mb-0 text-sm">${persRes.date}</h6>
+                    <p class="mb-0 text-xs">Shift: Afternoon</p>
+                </div>
+                <a class="btn btn-link pe-3 ps-0 mb-0 ms-auto" href="javascript:;" onClick="delete_persRes('${persRes.id}','${npn}')">Cancel</a>`;
+                resList.appendChild(persRes_list);
+            }
+        });
+}
+
+function delete_persRes(schedule_id,npn){
+    // Create a FormData object
+    const formData = new FormData();
+
+    formData.append('npn', npn); 
+
+    fetch(`https://api1.simplyworkcrm.com/api:Y0n8xNqT/bookings/calls/schedules/${schedule_id}`, {
+        method: "DELETE",
+        headers: {
+        "Accept": "application/json" 
+        // Typically, do NOT set 'Content-Type': 'multipart/form-data' here;
+        // fetch + FormData will do that automatically.
+        },
+        body: formData
+    })
+    .then(response => {
+        if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    return response.json();
+    })
+    .then(data => {
+        console.log("Success:", data);
+        fetchPersRes(npn);
+        fetchAvailsched(npn);
+
+    })
+    .catch(error => {
+        console.error("Error:", error);
+    });
+}
+
+
+
+
+
+
+
+
