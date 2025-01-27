@@ -284,37 +284,44 @@ function fetchPersRes(npn){
 
 function previewPersRes(persRes,npn){
     const resList = document.getElementById("myReservation");
+    const storedNpn = localStorage.getItem("npn");
 
     persRes.forEach(persRes => {
-        if(persRes.shift==1){
-            const persRes_list = document.createElement('li');
-            persRes_list.className='list-group-item border-0 d-flex align-items-center px-0 mb-2';
-            persRes_list.innerHTML = `
-                <div class="avatar me-3">
-                    <img src="../assets/img/calendar-icon.jpg" alt="kal" class="border-radius-lg shadow">
-                </div>
-                <div class="d-flex align-items-start flex-column justify-content-center">
-                    <h6 class="mb-0 text-sm">${persRes.date}</h6>
-                    <p class="mb-0 text-xs">Shift: Morning</p>
-                </div>
-                <a class="btn btn-link pe-3 ps-0 mb-0 ms-auto" href="javascript:;" onClick="delete_persRes('${persRes.id}','${npn}')">Cancel</a>`;
-                resList.appendChild(persRes_list);
+        if(storedNpn!=persRes.callx_ghl_info.npn){
+            //skip data
+        }
+        else{
+            if(persRes.shift==1){
+                const persRes_list = document.createElement('li');
+                persRes_list.className='list-group-item border-0 d-flex align-items-center px-0 mb-2';
+                persRes_list.innerHTML = `
+                    <div class="avatar me-3">
+                        <img src="../assets/img/calendar-icon.jpg" alt="kal" class="border-radius-lg shadow">
+                    </div>
+                    <div class="d-flex align-items-start flex-column justify-content-center">
+                        <h6 class="mb-0 text-sm">${persRes.date}</h6>
+                        <p class="mb-0 text-xs">Shift: Morning</p>
+                    </div>
+                    <a class="btn btn-link pe-3 ps-0 mb-0 ms-auto" href="javascript:;" onClick="delete_persRes('${persRes.id}','${npn}')">Cancel</a>`;
+                    resList.appendChild(persRes_list);
             }
             else{
-                const persRes_list = document.createElement('li');
-            persRes_list.className='list-group-item border-0 d-flex align-items-center px-0 mb-2';
-            persRes_list.innerHTML = `
-                <div class="avatar me-3">
-                    <img src="../assets/img/calendar-icon.jpg" alt="kal" class="border-radius-lg shadow">
-                </div>
-                <div class="d-flex align-items-start flex-column justify-content-center">
-                    <h6 class="mb-0 text-sm">${persRes.date}</h6>
-                    <p class="mb-0 text-xs">Shift: Afternoon</p>
-                </div>
-                <a class="btn btn-link pe-3 ps-0 mb-0 ms-auto" href="javascript:;" onClick="delete_persRes('${persRes.id}','${npn}')">Cancel</a>`;
-                resList.appendChild(persRes_list);
+                    const persRes_list = document.createElement('li');
+                persRes_list.className='list-group-item border-0 d-flex align-items-center px-0 mb-2';
+                persRes_list.innerHTML = `
+                    <div class="avatar me-3">
+                        <img src="../assets/img/calendar-icon.jpg" alt="kal" class="border-radius-lg shadow">
+                    </div>
+                    <div class="d-flex align-items-start flex-column justify-content-center">
+                        <h6 class="mb-0 text-sm">${persRes.date}</h6>
+                        <p class="mb-0 text-xs">Shift: Afternoon</p>
+                    </div>
+                    <a class="btn btn-link pe-3 ps-0 mb-0 ms-auto" href="javascript:;" onClick="delete_persRes('${persRes.id}','${npn}')">Cancel</a>`;
+                    resList.appendChild(persRes_list);
             }
-        });
+        }
+        
+    });
 }
 
 function delete_persRes(schedule_id,npn){
@@ -351,12 +358,15 @@ function delete_persRes(schedule_id,npn){
 
 //fetch all reservation
 function fetchAllRes(npn){
+    //format Data
+    const allresList = document.getElementById("allSchedule");
+    allresList.innerHTML='';
     const requestOptions = {
         method: "GET",
         redirect: "follow"
         };
     
-        fetch(`https://api1.simplyworkcrm.com/api:Y0n8xNqT/bookings/calls/schedules?limit=10&npn=${npn}&view_all=true&from_today=true&groups[logic]=string&groups[conditions][field]=string&groups[conditions][op]=string&groups[conditions][value]=string`, requestOptions)
+        fetch(`https://api1.simplyworkcrm.com/api:Y0n8xNqT/bookings/calls/schedules?limit=30&npn=${npn}&view_all=true&from_today=true&groups[logic]=string&groups[conditions][field]=string&groups[conditions][op]=string&groups[conditions][value]=string`, requestOptions)
             .then(response => response.json()) // Convert response to JSON
             .then(data => {
                 console.log(data); // Log the full response for debugging
@@ -380,9 +390,7 @@ function fetchAllRes(npn){
 }
 
 function previewAllRes(allRes){
-    //format data
     const allresList = document.getElementById("allSchedule");
-    allresList.innerHTML='';
     const storedAccess = localStorage.getItem("access");
     const storedNpn = localStorage.getItem("npn");
 
@@ -452,57 +460,60 @@ function previewAllRes(allRes){
         }
         //when non-admin user
         else{
-            if(allRes.shift == 1){
-                const allRes_list = document.createElement('tr');
-                allRes_list.className='list-group-item border-0 d-flex align-items-center px-0 mb-2';
-                allRes_list.innerHTML = `
-                    <td class="align-middle text-center">
-                        <span class="text-secondary text-xs font-weight-bold">${allRes.date}</span>
-                    </td>
-                    <td>
-                        <div class="d-flex px-2 py-1">
-                            <div class="d-flex flex-column justify-content-center">
-                                <h6 class="mb-0 text-sm">${allRes.agent_name}</h6>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="text-sm">
-                        <span class="badge badge-sm bg-gradient-success">Morning Shift</span>
-                    </td>
-                    <td class="align-middle">
-                        <p class="text-xs text-center font-weight-bold mb-0">Booked</p>
-                    </td>
-                                                
-                    <td class="align-middle">
-                    </td>`;
-                allresList.appendChild(allRes_list);
+            //check if it gets own schedule
+            if(allRes.callx_ghl_info.npn==storedNpn){
+                //skip data
             }
             else{
-                const allRes_list = document.createElement('tr');
-                allRes_list.className='list-group-item border-0 d-flex align-items-center px-0 mb-2';
-                allRes_list.innerHTML = `
-                    <td class="align-middle text-center">
-                        <span class="text-secondary text-xs font-weight-bold">${allRes.date}</span>
-                    </td>
-                    <td>
-                        <div class="d-flex px-2 py-1">
-                            <div class="d-flex flex-column justify-content-center">
-                                <h6 class="mb-0 text-sm">${allRes.agent_name}</h6>
+                if(allRes.shift == 1){
+                    const allRes_list = document.createElement('tr');
+                    allRes_list.innerHTML = `
+                        <td class="align-middle text-center">
+                            <span class="text-secondary text-xs font-weight-bold">${allRes.date}</span>
+                        </td>
+                        <td>
+                            <div class="d-flex px-2 py-1">
+                                <div class="d-flex flex-column justify-content-center">
+                                    <h6 class="mb-0 text-sm">${allRes.callx_ghl_info.agent_name}</h6>
+                                </div>
                             </div>
-                        </div>
-                    </td>
-                    <td class="text-sm">
-                        <span class="badge badge-sm bg-gradient-success">Afternoon Shift</span>
-                    </td>
-                    <td class="align-middle">
-                        <p class="text-xs text-center font-weight-bold mb-0">Booked</p>
-                    </td>
-                                                
-                    <td class="align-middle">
-                    </td>`;
-                allresList.appendChild(allRes_list);
+                        </td>
+                        <td class="text-sm">
+                            <span class="badge badge-sm bg-gradient-success">Morning Shift</span>
+                        </td>
+                        <td class="align-middle">
+                            <p class="text-xs text-center font-weight-bold mb-0">Booked</p>
+                        </td>
+                                                    
+                        <td class="align-middle">
+                        </td>`;
+                    allresList.appendChild(allRes_list);
+                }
+                else{
+                    const allRes_list = document.createElement('tr');
+                    allRes_list.innerHTML = `
+                        <td class="align-middle text-center">
+                            <span class="text-secondary text-xs font-weight-bold">${allRes.date}</span>
+                        </td>
+                        <td>
+                            <div class="d-flex px-2 py-1">
+                            <div class="d-flex flex-column justify-content-center">
+                                <h6 class="mb-0 text-sm">${allRes.callx_ghl_info.agent_name}</h6>
+                            </div>
+                            </div>
+                        </td>
+                        <td class="text-sm">
+                            <span class="badge badge-sm bg-gradient-success">Afternoon Shift</span>
+                        </td>
+                        <td class="align-middle">
+                            <p class="text-xs text-center font-weight-bold mb-0">Booked</p>
+                        </td>                                
+                        <td class="align-middle">
+                        </td>`;
+                    allresList.appendChild(allRes_list);
+                }
             }
-        }
+        }       
     });
 }
 
