@@ -11,6 +11,10 @@ window.addEventListener("DOMContentLoaded", (event) => {
     if (refresh_persRes){
         refresh_persRes.addEventListener('click', persRes_refresh);
     }
+    const refresh_allRes = document.getElementById('allRes_refresh');
+    if(refresh_allRes){
+        refresh_allRes.addEventListener('click',allRes_refresh);
+    }
 
 });
 
@@ -550,7 +554,11 @@ function delete_AllRes(schedule_id,npn){
     });
 }
 
-
+//refresh personal schedule
+function allRes_refresh(){
+    const storedNpn = localStorage.getItem("npn");
+    fetchAllRes(storedNpn);
+}
 
 
 
