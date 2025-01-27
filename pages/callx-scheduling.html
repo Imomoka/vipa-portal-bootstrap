@@ -21,6 +21,7 @@
 
     <!-- CSS Files -->
     <link id="pagestyle" href="../assets/css/soft-ui-dashboard.css?v=1.1.0" rel="stylesheet" />
+
     <!-- Nepcha Analytics (nepcha.com) -->
     <!-- Nepcha is a easy-to-use web analytics. No cookies and fully compliant with GDPR, CCPA and PECR. -->
     <script defer data-site="YOUR_DOMAIN_HERE" src="https://api.nepcha.com/js/nepcha-analytics.js"></script>
@@ -95,7 +96,7 @@
     <div class="main-content position-relative max-height-vh-100 h-100">
 
         <!-- Authentication page -->
-        <div id="page-npn-authenticate" class="min-vh-75 d-none">
+        <div id="page-npn-authenticate" class="min-vh-75">
             <div class="container">
                 <div class="row">
                     <div class="col-xl-4 col-lg-5 col-md-6 d-flex flex-column mx-auto">
@@ -125,7 +126,8 @@
         </div>
 
         <!-- Booking content -->
-        <div id="booking_content" class="">
+        <div id="booking_content" class="d-none">
+
             <!-- Header Container -->
         <div class="container-fluid">
             <div class="page-header min-height-200 border-radius-lg mt-4 d-flex flex-column justify-content-end">
@@ -262,14 +264,17 @@
                 <div class="col-12">
                     <div class="card mb-4 p-3">
                         <div class="row">
-                            <div class="col-6 d-flex align-items-center">
-                                <h6 class="mb-0">CallX Preview Other Booked Schedules</h6>  
+                            <div class="col-6">
+                                <div class="d-flex align-items-center">
+                                    <h6 class="mb-0">CallX Preview Other Booked Schedules</h6>  
+                                </div>
                             </div>
-                            <div class="col-6 text-end">
-                                <a id="allRes_refresh" class="btn bg-gradient-dark mb-0" href="javascript:;">Refresh</a>
-                            </div>
+                            <div class="col-6 d-flex flex-row justify-content-end">
+                                <button type="button" class="btn btn-outline-secondary mb-0 mx-2" data-bs-toggle="modal" data-bs-target="#advanceFilter">Advanced Filters  <i class="fa fa-bars"></i></button>
+                                <a id="allRes_refresh" class="btn bg-gradient-dark mb-0 mx-2" href="javascript:;">Refresh</a>
+                            </div>  
                         </div>
-                        <div class="card-body px-0 pt-0 pb-2">
+                        <div class="card-body px-0 pt-0 pb-2 mt-4">
                             <div class="table-responsive p-0">
                                 <table class="table align-items-center mb-0">
                                     <thead>
@@ -283,31 +288,6 @@
                                         </tr>
                                     </thead>
                                     <tbody id="allSchedule">
-                                        
-                                        <!-- <tr>
-                                            <td class="align-middle text-center">
-                                                <span class="text-secondary text-xs font-weight-bold">23/04/18</span>
-                                            </td>
-                                            <td>
-                                                <div class="d-flex px-2 py-1">
-                                                    <div class="d-flex flex-column justify-content-center">
-                                                        <h6 class="mb-0 text-sm">John Michael</h6>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td class="text-sm">
-                                                <span class="badge badge-sm bg-gradient-success">Online</span>
-                                            </td>
-                                            <td class="align-middle">
-                                                <p class="text-xs text-center font-weight-bold mb-0">Manager</p>
-                                            </td>
-                                            
-                                            <td class="align-middle">
-                                                <a href="javascript:;" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
-                                                    Edit
-                                                </a>
-                                            </td> -->
-                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -324,12 +304,53 @@
     </div>
     <!-- This is the end of the page content -->
 
-    
+    <!-- Modal -->
+    <div class="modal fade" id="advanceFilter" tabindex="-1" role="dialog" aria-labelledby="advanceFilterLabel">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="advanceFilterLabel">Advance Filter</h5>
+                    <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row d-flex flex-row">
+                        <div class="col">
+                            <p class="text-xs">Date</p>
+                            <select id="advanceFilter_date" class="form-select">
+                                <option value="0" selected>Select Date</option>
+                                <option value="2025-01-31">2025-01-31</option>
+                                <option value="2">Two</option>
+                                <option value="3">Three</option>
+                            </select>
+                        </div>
+                        <div class="col">
+                            <p class="text-xs">Shift Time</p>
+                            <select id="advanceFilter_shift" class="form-select">
+                                <option value="0" selected>Select Shift</option>
+                                <option value="1">Morning</option>
+                                <option value="2">Afternoon</option>
+                            </select>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" id="advanceFilterbutton" class="btn bg-gradient-primary">Apply Filter</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- UI configurator -->
     <div class="fixed-plugin">
         <a class="fixed-plugin-button text-dark position-fixed px-3 py-2">
         <i class="fa fa-cog py-2"> </i>
         </a>
-        <div class="card shadow-lg ">
+        <!-- fixed-plugin content -->
+        <div id="fixed-plugin" class="card shadow-lg ">
             <div class="card-header pb-0 pt-3 ">
                 <div class="float-start">
                     <h5 class="mt-3 mb-0">VIPA UI Configurator</h5>
@@ -374,6 +395,7 @@
             </div>
         </div>
     </div>
+    <!-- end UI configurator -->
 
     <!--   Core JS Files   -->
     <script src="../assets/js/core/popper.min.js"></script>

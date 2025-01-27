@@ -11,11 +11,14 @@ window.addEventListener("DOMContentLoaded", (event) => {
     if (refresh_persRes){
         refresh_persRes.addEventListener('click', persRes_refresh);
     }
-    const refresh_allRes = document.getElementById('allRes_refresh');
-    if(refresh_allRes){
-        refresh_allRes.addEventListener('click',allRes_refresh);
+    const advanceFilterbutton = document.getElementById('advanceFilterbutton');
+    if(advanceFilterbutton){
+        advanceFilterbutton.addEventListener('click',advanceFilter);
     }
-
+    const allRes_refresh= document.getElementById('allRes_refresh');
+    if(allRes_refresh){
+            allRes_refresh.addEventListener('click',refresh_allRes);
+    }
 });
 
 // Run automatically on page load if NPN exists in localStorage
@@ -75,9 +78,12 @@ function fetchAgentData(npn){
                 document.getElementById("agent_name").textContent = ""; // Clear agent name on error
             });
 }
-//refresh availability schedule
-function avail_refresh(){
 
+
+
+
+//get NPN for refresh availability schedule
+function avail_refresh(){
     const storedNpn = localStorage.getItem("npn");
     fetchAvailsched(storedNpn);
 }
@@ -248,7 +254,10 @@ function bookSlot(date,npn,shift){
     
 }
 
-//refresh personal schedule
+
+
+
+//get NPN for refresh personal reservations
 function persRes_refresh(){
     const storedNpn = localStorage.getItem("npn");
     fetchPersRes(storedNpn);
@@ -360,6 +369,266 @@ function delete_persRes(schedule_id,npn){
     });
 }
 
+
+
+//declare needed element for advance filter
+function advanceFilter(){
+    const storedNpn = localStorage.getItem("npn");
+    if(storedNpn){
+        var advanceFilter_date= document.getElementById('advanceFilter_date').value;
+        var advanceFilter_shift = document.getElementById('advanceFilter_shift').value;
+        fetchadvanceFilterRes(storedNpn,advanceFilter_date,advanceFilter_shift);
+    }
+}
+//fetch all reservation with advance filters
+function fetchadvanceFilterRes(npn,date,shift){
+    //format Data
+    const allresList = document.getElementById("allSchedule");
+    allresList.innerHTML='';
+
+    const requestOptions = {
+        method: "GET",
+        redirect: "follow"
+        };
+        console.log(npn,date, shift);
+    
+        fetch(`https://api1.simplyworkcrm.com/api:Y0n8xNqT/bookings/calls/schedules?
+                page=1
+                &limit=100
+                &npn=${npn}
+                &search[groups][0][logic]=AND
+                &search[groups][0][conditions][0][field]=date
+                &search[groups][0][conditions][0][op]==
+                &search[groups][0][conditions][0][value]=${date}
+                &search[groups][0][conditions][1][field]=shift
+                &search[groups][0][conditions][1][op]==
+                &search[groups][0][conditions][1][value]=${shift}
+                &view_all=true&from_today=true`, requestOptions)
+            .then(response => response.json()) // Convert response to JSON
+            .then(data => {
+                console.log(data); // Log the full response for debugging
+    
+                // Check if response contains an error
+                if (data.code) {
+                    console.log("An Error has occured, please contact dev.")
+                } else if (data.items) {
+    
+                    // Preview Available Slots
+                    previewadvanceFilterRes(data.items);
+                    document.getElementById('allRes_refresh').innerHTML="Clear Filter";
+                    
+                } else {
+                    // Handle unexpected response format
+                    console.log("Unexpected error received")
+                }
+            })
+            .catch(error => {
+                console.error("Error fetching data:", error);    
+            });
+}
+function previewadvanceFilterRes(allRes){
+    const allresList = document.getElementById("allSchedule");
+    const storedAccess = localStorage.getItem("access");
+    const storedNpn = localStorage.getItem("npn");
+
+    allRes.forEach(allRes => {
+        //Check whether it is an admin user
+        if(storedAccess=="admin"){
+            if(allRes.callx_ghl_info.npn== storedNpn){
+                //skip table       
+            }
+            else{
+                if(allRes.shift == 1){
+        
+                    const allRes_list = document.createElement('tr');
+                    allRes_list.innerHTML = `
+                        <td class="align-middle text-center">
+                            <span class="text-secondary text-xs font-weight-bold">${allRes.date}</span>
+                        </td>
+                        <td>
+                            <div class="d-flex px-2 py-1">
+                                <div class="d-flex flex-column justify-content-center">
+                                    <h6 class="mb-0 text-sm">${allRes.callx_ghl_info.agent_name}</h6>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text-sm">
+                            <span class="badge badge-sm bg-gradient-success">Morning Shift</span>
+                        </td>
+                        <td class="align-middle">
+                            <p class="text-xs text-center font-weight-bold mb-0">Booked</p>
+                        </td>
+                                                    
+                        <td class="align-middle">
+                            <a href="javascript:;" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user" onClick="delete_AllRes('${allRes.id}','${allRes.callx_ghl_info.npn}')">
+                                Delete
+                            </a>
+                        </td>`;
+                    allresList.appendChild(allRes_list);
+                }
+                else{
+                    const allRes_list = document.createElement('tr');
+                    allRes_list.innerHTML = `
+                        <td class="align-middle text-center">
+                            <span class="text-secondary text-xs font-weight-bold">${allRes.date}</span>
+                        </td>
+                        <td>
+                            <div class="d-flex px-2 py-1">
+                                <div class="d-flex flex-column justify-content-center">
+                                    <h6 class="mb-0 text-sm">${allRes.callx_ghl_info.agent_name}</h6>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text-sm">
+                            <span class="badge badge-sm bg-gradient-success">Afternoon Shift</span>
+                        </td>
+                        <td class="align-middle">
+                            <p class="text-xs text-center font-weight-bold mb-0">Booked</p>
+                        </td>
+                                                    
+                        <td class="align-middle">
+                             <a href="javascript:;" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user" onClick="delete_AllRes('${allRes.id}','${allRes.callx_ghl_info.npn}')">
+                                Delete
+                            </a>
+                        </td>`;
+                    allresList.appendChild(allRes_list);
+                }
+            }         
+        }
+        //when non-admin user
+        else{
+            //check if it gets own schedule
+            if(allRes.callx_ghl_info.npn==storedNpn){
+                //skip data
+            }
+            else{
+                if(allRes.shift == 1){
+                    const allRes_list = document.createElement('tr');
+                    allRes_list.innerHTML = `
+                        <td class="align-middle text-center">
+                            <span class="text-secondary text-xs font-weight-bold">${allRes.date}</span>
+                        </td>
+                        <td>
+                            <div class="d-flex px-2 py-1">
+                                <div class="d-flex flex-column justify-content-center">
+                                    <h6 class="mb-0 text-sm">${allRes.callx_ghl_info.agent_name}</h6>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text-sm">
+                            <span class="badge badge-sm bg-gradient-success">Morning Shift</span>
+                        </td>
+                        <td class="align-middle">
+                            <p class="text-xs text-center font-weight-bold mb-0">Booked</p>
+                        </td>
+                                                    
+                        <td class="align-middle">
+                        </td>`;
+                    allresList.appendChild(allRes_list);
+                }
+                else{
+                    const allRes_list = document.createElement('tr');
+                    allRes_list.innerHTML = `
+                        <td class="align-middle text-center">
+                            <span class="text-secondary text-xs font-weight-bold">${allRes.date}</span>
+                        </td>
+                        <td>
+                            <div class="d-flex px-2 py-1">
+                            <div class="d-flex flex-column justify-content-center">
+                                <h6 class="mb-0 text-sm">${allRes.callx_ghl_info.agent_name}</h6>
+                            </div>
+                            </div>
+                        </td>
+                        <td class="text-sm">
+                            <span class="badge badge-sm bg-gradient-success">Afternoon Shift</span>
+                        </td>
+                        <td class="align-middle">
+                            <p class="text-xs text-center font-weight-bold mb-0">Booked</p>
+                        </td>                                
+                        <td class="align-middle">
+                        </td>`;
+                    allresList.appendChild(allRes_list);
+                }
+            }
+        }       
+    });
+}
+
+
+
+//get NPN for refresh all reservations
+function refresh_allRes(){
+    const storedNpn = localStorage.getItem("npn");
+    fetchAllRes(storedNpn);
+}
+
+function populateUniqueDates(data) {
+    // Grab the "items" array from the payload
+    const items = data;
+    
+    // Get the <select> element by its ID
+    const selectElement = document.getElementById('advanceFilter_date');
+    selectElement.innerHTML='';
+    
+    // Extract all dates from the items array
+    const allDates = items.map(item => item.date);
+  
+    // Make them unique by converting to a Set and back to an array
+    const uniqueDates = [...new Set(allDates)];
+  
+    // (Optional) Clear existing <option> tags except the first one
+    while (selectElement.options.length > 1) {
+      selectElement.remove(1);
+    }
+  
+    // Create a new <option> for each unique date
+    uniqueDates.forEach(dateValue => {
+        const option = document.createElement('option');
+        option.value = dateValue;
+        option.textContent = dateValue;
+        selectElement.appendChild(option);
+    });
+}
+
+function populateUniqueShifts(data){
+    // Grab the "items" array from the payload
+    const items = data;
+    
+    // Get the <select> element by its ID
+    const selectElement = document.getElementById('advanceFilter_shift');
+    selectElement.innerHTML='';
+    
+    // Extract all dates from the items array
+    const allShifts = items.map(item => item.shift);
+  
+    // Make them unique by converting to a Set and back to an array
+    const uniqueShifts = [...new Set(allShifts)];
+  
+    // (Optional) Clear existing <option> tags except the first one
+    while (selectElement.options.length > 1) {
+      selectElement.remove(1);
+    }
+  
+    // Create a new <option> for each unique date
+    uniqueShifts.forEach(shiftValue => {
+        if(shiftValue==1){
+            const option = document.createElement('option');
+            option.value = shiftValue;
+            option.textContent = "Morning";
+            selectElement.appendChild(option);
+        }
+        else if(shiftValue==2){
+            const option = document.createElement('option');
+            option.value = shiftValue;
+            option.textContent = "Afternoon";
+            selectElement.appendChild(option);
+        }
+        
+    });
+}
+
+
+
 //fetch all reservation
 function fetchAllRes(npn){
     //format Data
@@ -370,7 +639,9 @@ function fetchAllRes(npn){
         redirect: "follow"
         };
     
-        fetch(`https://api1.simplyworkcrm.com/api:Y0n8xNqT/bookings/calls/schedules?limit=30&npn=${npn}&view_all=true&from_today=true&groups[logic]=string&groups[conditions][field]=string&groups[conditions][op]=string&groups[conditions][value]=string`, requestOptions)
+        fetch(`https://api1.simplyworkcrm.com/api:Y0n8xNqT/bookings/calls/schedules?
+        limit=30&npn=${npn}
+        &view_all=true&from_today=true&groups[logic]=string&groups[conditions][field]=string&groups[conditions][op]=string&groups[conditions][value]=string`, requestOptions)
             .then(response => response.json()) // Convert response to JSON
             .then(data => {
                 console.log(data); // Log the full response for debugging
@@ -382,6 +653,9 @@ function fetchAllRes(npn){
     
                     // Preview Available Slots
                     previewAllRes(data.items);
+                    populateUniqueDates(data.items);
+                    populateUniqueShifts(data.items);
+                    document.getElementById('allRes_refresh').innerHTML="Refresh";
                     
                 } else {
                     // Handle unexpected response format
@@ -520,7 +794,6 @@ function previewAllRes(allRes){
         }       
     });
 }
-
 //only admins
 function delete_AllRes(schedule_id,npn){
     // Create a FormData object
@@ -552,12 +825,6 @@ function delete_AllRes(schedule_id,npn){
     .catch(error => {
         console.error("Error:", error);
     });
-}
-
-//refresh personal schedule
-function allRes_refresh(){
-    const storedNpn = localStorage.getItem("npn");
-    fetchAllRes(storedNpn);
 }
 
 
