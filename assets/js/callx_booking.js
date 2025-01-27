@@ -11,6 +11,7 @@ window.addEventListener("DOMContentLoaded", (event) => {
     if (refresh_persRes){
         refresh_persRes.addEventListener('click', persRes_refresh);
     }
+
 });
 
 // Run automatically on page load if NPN exists in localStorage
@@ -54,8 +55,10 @@ function fetchAgentData(npn){
                     document.getElementById('booking_content').classList.remove("d-none");
                     document.getElementById('page-npn-authenticate').classList.add("d-none");
                     localStorage.setItem("npn",npn);
+                    localStorage.setItem("access",data.user_type)
                     fetchAvailsched(npn);
                     fetchPersRes(npn);
+                    fetchAllRes(npn);
                 } else {
                     // Handle unexpected response format
                     document.getElementById("error_message").textContent = "Unexpected response received.";
@@ -70,11 +73,17 @@ function fetchAgentData(npn){
 }
 //refresh availability schedule
 function avail_refresh(){
+
     const storedNpn = localStorage.getItem("npn");
     fetchAvailsched(storedNpn);
 }
 //fetch all Availabilities
 function fetchAvailsched(npn){
+    //format data
+    const amList = document.getElementById("availAMsched");
+    amList.innerHTML='';
+    const pmList = document.getElementById("availPMsched");
+    pmList.innerHTML='';
     const requestOptions = {
         method: "GET",
         redirect: "follow"
@@ -104,13 +113,10 @@ function fetchAvailsched(npn){
 }
 //preview Availabilities
 function previewAvailsched(availsched,npn){
-    //format data
-    const amList = document.getElementById("availAMsched");
-    amList.innerHTML='';
-    const pmList = document.getElementById("availPMsched");
-    pmList.innerHTML='';
-
-    availsched.forEach(availsched => {
+        //format data
+        const amList = document.getElementById("availAMsched");
+        const pmList = document.getElementById("availPMsched");
+        availsched.forEach(availsched => {
 
         //check if morning shift
         if(availsched.shift==1){
@@ -245,6 +251,9 @@ function persRes_refresh(){
 }
 //fetch own reservation
 function fetchPersRes(npn){
+    //format data
+    const resList = document.getElementById("myReservation");
+    resList.innerHTML='';
     const requestOptions = {
         method: "GET",
         redirect: "follow"
@@ -274,9 +283,7 @@ function fetchPersRes(npn){
 }
 
 function previewPersRes(persRes,npn){
-    //format data
     const resList = document.getElementById("myReservation");
-    resList.innerHTML='';
 
     persRes.forEach(persRes => {
         if(persRes.shift==1){
@@ -313,6 +320,7 @@ function previewPersRes(persRes,npn){
 function delete_persRes(schedule_id,npn){
     // Create a FormData object
     const formData = new FormData();
+    console.log(schedule_id,npn);
 
     formData.append('npn', npn); 
 
@@ -335,7 +343,196 @@ function delete_persRes(schedule_id,npn){
         console.log("Success:", data);
         fetchPersRes(npn);
         fetchAvailsched(npn);
+    })
+    .catch(error => {
+        console.error("Error:", error);
+    });
+}
 
+//fetch all reservation
+function fetchAllRes(npn){
+    const requestOptions = {
+        method: "GET",
+        redirect: "follow"
+        };
+    
+        fetch(`https://api1.simplyworkcrm.com/api:Y0n8xNqT/bookings/calls/schedules?limit=10&npn=${npn}&view_all=true&from_today=true&groups[logic]=string&groups[conditions][field]=string&groups[conditions][op]=string&groups[conditions][value]=string`, requestOptions)
+            .then(response => response.json()) // Convert response to JSON
+            .then(data => {
+                console.log(data); // Log the full response for debugging
+    
+                // Check if response contains an error
+                if (data.code) {
+                    console.log("An Error has occured, please contact dev.")
+                } else if (data.items) {
+    
+                    // Preview Available Slots
+                    previewAllRes(data.items);
+                    
+                } else {
+                    // Handle unexpected response format
+                    console.log("Unexpected error received")
+                }
+            })
+            .catch(error => {
+                console.error("Error fetching data:", error);    
+            });
+}
+
+function previewAllRes(allRes){
+    //format data
+    const allresList = document.getElementById("allSchedule");
+    allresList.innerHTML='';
+    const storedAccess = localStorage.getItem("access");
+    const storedNpn = localStorage.getItem("npn");
+
+    allRes.forEach(allRes => {
+        //Check whether it is an admin user
+        if(storedAccess=="admin"){
+            if(allRes.callx_ghl_info.npn== storedNpn){
+                //skip table       
+            }
+            else{
+                if(allRes.shift == 1){
+        
+                    const allRes_list = document.createElement('tr');
+                    allRes_list.innerHTML = `
+                        <td class="align-middle text-center">
+                            <span class="text-secondary text-xs font-weight-bold">${allRes.date}</span>
+                        </td>
+                        <td>
+                            <div class="d-flex px-2 py-1">
+                                <div class="d-flex flex-column justify-content-center">
+                                    <h6 class="mb-0 text-sm">${allRes.callx_ghl_info.agent_name}</h6>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text-sm">
+                            <span class="badge badge-sm bg-gradient-success">Morning Shift</span>
+                        </td>
+                        <td class="align-middle">
+                            <p class="text-xs text-center font-weight-bold mb-0">Booked</p>
+                        </td>
+                                                    
+                        <td class="align-middle">
+                            <a href="javascript:;" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user" onClick="delete_AllRes('${allRes.id}','${allRes.callx_ghl_info.npn}')">
+                                Delete
+                            </a>
+                        </td>`;
+                    allresList.appendChild(allRes_list);
+                }
+                else{
+                    const allRes_list = document.createElement('tr');
+                    allRes_list.innerHTML = `
+                        <td class="align-middle text-center">
+                            <span class="text-secondary text-xs font-weight-bold">${allRes.date}</span>
+                        </td>
+                        <td>
+                            <div class="d-flex px-2 py-1">
+                                <div class="d-flex flex-column justify-content-center">
+                                    <h6 class="mb-0 text-sm">${allRes.callx_ghl_info.agent_name}</h6>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text-sm">
+                            <span class="badge badge-sm bg-gradient-success">Afternoon Shift</span>
+                        </td>
+                        <td class="align-middle">
+                            <p class="text-xs text-center font-weight-bold mb-0">Booked</p>
+                        </td>
+                                                    
+                        <td class="align-middle">
+                             <a href="javascript:;" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user" onClick="delete_AllRes('${allRes.id}','${allRes.callx_ghl_info.npn}')">
+                                Delete
+                            </a>
+                        </td>`;
+                    allresList.appendChild(allRes_list);
+                }
+            }         
+        }
+        //when non-admin user
+        else{
+            if(allRes.shift == 1){
+                const allRes_list = document.createElement('tr');
+                allRes_list.className='list-group-item border-0 d-flex align-items-center px-0 mb-2';
+                allRes_list.innerHTML = `
+                    <td class="align-middle text-center">
+                        <span class="text-secondary text-xs font-weight-bold">${allRes.date}</span>
+                    </td>
+                    <td>
+                        <div class="d-flex px-2 py-1">
+                            <div class="d-flex flex-column justify-content-center">
+                                <h6 class="mb-0 text-sm">${allRes.agent_name}</h6>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="text-sm">
+                        <span class="badge badge-sm bg-gradient-success">Morning Shift</span>
+                    </td>
+                    <td class="align-middle">
+                        <p class="text-xs text-center font-weight-bold mb-0">Booked</p>
+                    </td>
+                                                
+                    <td class="align-middle">
+                    </td>`;
+                allresList.appendChild(allRes_list);
+            }
+            else{
+                const allRes_list = document.createElement('tr');
+                allRes_list.className='list-group-item border-0 d-flex align-items-center px-0 mb-2';
+                allRes_list.innerHTML = `
+                    <td class="align-middle text-center">
+                        <span class="text-secondary text-xs font-weight-bold">${allRes.date}</span>
+                    </td>
+                    <td>
+                        <div class="d-flex px-2 py-1">
+                            <div class="d-flex flex-column justify-content-center">
+                                <h6 class="mb-0 text-sm">${allRes.agent_name}</h6>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="text-sm">
+                        <span class="badge badge-sm bg-gradient-success">Afternoon Shift</span>
+                    </td>
+                    <td class="align-middle">
+                        <p class="text-xs text-center font-weight-bold mb-0">Booked</p>
+                    </td>
+                                                
+                    <td class="align-middle">
+                    </td>`;
+                allresList.appendChild(allRes_list);
+            }
+        }
+    });
+}
+
+//only admins
+function delete_AllRes(schedule_id,npn){
+    // Create a FormData object
+    const formData = new FormData();
+    console.log(schedule_id,npn);
+
+    formData.append('npn', npn); 
+
+    fetch(`https://api1.simplyworkcrm.com/api:Y0n8xNqT/bookings/calls/schedules/${schedule_id}`, {
+        method: "DELETE",
+        headers: {
+        "Accept": "application/json" 
+        // Typically, do NOT set 'Content-Type': 'multipart/form-data' here;
+        // fetch + FormData will do that automatically.
+        },
+        body: formData
+    })
+    .then(response => {
+        if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    return response.json();
+    })
+    .then(data => {
+        console.log("Success:", data);
+        const storedNPN = localStorage.getItem("npn");
+        fetchAllRes(storedNPN);
     })
     .catch(error => {
         console.error("Error:", error);
