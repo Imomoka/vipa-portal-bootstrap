@@ -115,8 +115,8 @@
                                         <button id="authenticate_npn" type="button" class="btn bg-gradient-info w-100 mt-4 mb-0">Sign in</button>
                                     </div>
                                 </form>
-                                <div>
-                                    <p id="error_message" stye="color:red;"></p>
+                                <div class="mt-2">
+                                    <p id="error_message" class="text-xs"></p>
                                 </div>
                             </div>
                         </div>
@@ -304,7 +304,7 @@
     </div>
     <!-- This is the end of the page content -->
 
-    <!-- Modal -->
+    <!-- Modal Advance Filter-->
     <div class="modal fade" id="advanceFilter" tabindex="-1" role="dialog" aria-labelledby="advanceFilterLabel">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
@@ -343,6 +343,64 @@
             </div>
         </div>
     </div>
+    <!-- end modal advance filter -->
+
+    <!-- Modal Authorize Error -->
+    <div class="modal fade" id="locationID_authorize_error" tabindex="-1" role="dialog" aria-labelledby="advanceFilterLabel">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="advanceFilterLabel">Register with location ID.</h5>
+                    <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="p-2">
+                        <p id="loc_modal_error_message" class="text-xs m-2"></p>
+                        <div id="locationauth_input">
+                            <p class="text-xs">Please input your location ID</p>
+                            <p class="text-xs"><strong>Location ID</strong></p>
+                            <div class="input-group mb-3">
+                                <input type="text" id="location_ID_auth"class="form-control" placeholder="Location ID" aria-label="Location ID">
+                                <button class="btn btn-outline-primary mb-0" type="button" id="loc_id_btn">Submit</button> 
+                            </div>
+                        </div>
+                        
+                        <div id="update_npn_loc_auth" class="d-none">
+                            <p class="text-xs">Please fill your info accurately.</p>
+                            <div class="row d-flex flex-row mb-3">
+                                <div class="col">
+                                    <p class="text-xs"><strong>National Producers Number</strong></p>
+                                    <input type="text" id="location_ID_auth_npn" class="form-control" placeholder="***225" aria-label="NPN Number">
+                                </div>
+                                <div class="col">
+                                    <p class="text-xs"><strong>Team Color</strong></p>
+                                    <select id="team_color_select" class="form-select">
+                                        <option value="0" selected>Select Date</option>
+                                        <option value="red">Red</option>
+                                        <option value="blue">Blue</option>
+                                    </select>
+                                </div>    
+                            </div>
+                            <div class="justify-content-end">
+                                <button class="btn btn-outline-primary mb-0" type="button" id="update_npn_btn">Submit</button> 
+                            </div>
+                            <div>
+                                <p id="update_npn_message" class="text-xs mt-2"></p>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>     
+                <div class="modal-footer">
+                    <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
+                </div>    
+            </div>    
+                
+        </div>
+        
+    </div>
+    <!-- end modal author Error -->
 
     <!-- UI configurator -->
     <div class="fixed-plugin">

@@ -19,6 +19,14 @@ window.addEventListener("DOMContentLoaded", (event) => {
     if(allRes_refresh){
             allRes_refresh.addEventListener('click',refresh_allRes);
     }
+    const check_locationauthbtn=document.getElementById('loc_id_btn');
+    if(check_locationauthbtn){
+        check_locationauthbtn.addEventListener('click',fetchAgentDatawlocationid);
+    }
+    const updateUser_npnbtn=document.getElementById('update_npn_btn');
+    if(updateUser_npnbtn){
+        updateUser_npnbtn.addEventListener('click',updateUser_npn);
+    }
 });
 
 // Run automatically on page load if NPN exists in localStorage
@@ -52,17 +60,19 @@ function fetchAgentData(npn){
                     document.getElementById("error_message").textContent = data.message;
                     document.getElementById("callx_user").textContent = ""; // Clear agent name if invalid npn
                     localStorage.clear("npn");
-                } else if (data.agent_name) {
+                    let locID_auth = new bootstrap.Modal(document.getElementById('locationID_authorize_error'), {});
+                    locID_auth.show();
+                } else if (data[0].agent_name) {
     
                     // Display agent name if valid response
-                    document.getElementById("callx_user").textContent = data.agent_name;
+                    document.getElementById("callx_user").textContent = data[0].agent_name;
                     document.getElementById("error_message").textContent = ""; // Clear any previous error
-                    document.getElementById('user_type').textContent = data.user_type;
+                    document.getElementById('user_type').textContent = data[0].user_type;
                     document.getElementById('npn_id').textContent = npn;
                     document.getElementById('booking_content').classList.remove("d-none");
                     document.getElementById('page-npn-authenticate').classList.add("d-none");
                     localStorage.setItem("npn",npn);
-                    localStorage.setItem("access",data.user_type)
+                    localStorage.setItem("access",data[0].user_type)
                     fetchAvailsched(npn);
                     fetchPersRes(npn);
                     fetchAllRes(npn);
@@ -77,6 +87,75 @@ function fetchAgentData(npn){
                 document.getElementById("error_message").textContent = "Error fetching data. Please try again.";
                 document.getElementById("agent_name").textContent = ""; // Clear agent name on error
             });
+}
+
+function fetchAgentDatawlocationid(){
+    const locationid = document.getElementById('location_ID_auth').value;
+
+    const requestOptions = {
+        method: "GET",
+        redirect: "follow"
+        };
+    
+        fetch(`https://api1.simplyworkcrm.com/api:Y0n8xNqT/integration/npn/{npn_number}?location_id=${locationid}`, requestOptions)
+            .then(response => response.json()) // Convert response to JSON
+            .then(data => {
+                console.log(data); // Log the full response for debugging
+    
+                // Check if response contains an error
+                if (data.code && data.message) {
+                    document.getElementById("loc_modal_error_message").textContent = data.message;
+
+                } else if (data[0].agent_name) {
+    
+                    // Display agent name if valid response
+                    document.getElementById("loc_modal_error_message").textContent = "Location Found";
+                    document.getElementById('update_npn_loc_auth').classList.remove("d-none");
+                    document.getElementById('locationauth_input').classList.add("d-none");
+                    localStorage.setItem("callx_user_id",data[0].id);
+                } else {
+                    // Handle unexpected response format
+                    document.getElementById("error_message").textContent = "Unexpected response received.";
+                    document.getElementById("callx_user").textContent = "";
+                }
+            })
+            .catch(error => {
+                console.error("Error fetching data:", error);
+                document.getElementById("error_message").textContent = "Error fetching data. Please try again.";
+                document.getElementById("agent_name").textContent = ""; // Clear agent name on error
+            });
+}
+
+function updateUser_npn(){
+    const npnNumber = document.getElementById('location_ID_auth_npn').value;
+    const team_color = document.getElementById('team_color_select').value;
+    const storedCallx_id = localStorage.getItem("callx_user_id");
+    fetch(`https://api1.simplyworkcrm.com/api:Y0n8xNqT/integration/npn/${storedCallx_id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          team: team_color,
+          npn: npnNumber
+        })
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+          document.getElementById("update_npn_message").textContent="There was an error, please contact support";
+        }
+        return response.json();
+      })
+      .then(data => {
+        // handle data here (no logs)
+        console.log(data)
+        document.getElementById("update_npn_message").textContent="Success! Please close popup and login with your NPN";
+        document.getElementById("error_message").textContent = "Success, Now you can input your NPN";
+      })
+      .catch(error => {
+        // handle error here (no logs)
+      });
 }
 
 
