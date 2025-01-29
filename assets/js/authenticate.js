@@ -1,86 +1,41 @@
-// declare elements and functions associated
-document.addEventListener("DOMContentLoaded", () => {
-
-    //declare show password toggle
-    const showPasswordToggle = document.getElementById('showPassword');
-    if(showPasswordToggle){
-        showPasswordToggle.addEventListener('change',changePasswordinputType);
-    }
-
-    //declare login button
-    const loginButton = document.getElementById('loginButton');
-    if(loginButton){
-        loginButton.addEventListener('click',authorizeUser);
-    }
-
-    //check if timer exist
-    const storedTimer = localStorage.getItem("timeLeft");
-    if (storedTimer) {
-        persistentTimer(storedTimer);
-    }
-
-
+//declare values for sign-in page
+window.addEventListener("DOMContentLoaded", ()=>{
+    updateCountdown();
 });
 
-//check showPassword Toggle state
-function changePasswordinputType(){
-    const passwordToggle = document.getElementById('showPassword');
-    const passwordField = document.getElementById('password_Field');
-    if(passwordToggle.checked){
-        passwordField.type='text';
+
+
+const initialtime = 60000;
+
+
+function getEndTime() {
+    let endTime = localStorage.getItem(STORAGE_KEY);
+    if (!endTime) {
+        endTime = Date.now() + TOTAL_TIME; // Set future timestamp
+        localStorage.setItem(STORAGE_KEY, endTime);
     }
-    else{
-        passwordField.type = 'password';
+    return parseInt(endTime);
+}
+
+function updateCountdown() {
+    const endTime = getEndTime();
+    let timeLeft = endTime - Date.now(); // Calculate remaining time
+
+    if (timeLeft <= 0) {
+        document.getElementById("countdown").innerHTML = "Time's up!";
+        localStorage.removeItem(STORAGE_KEY); // Clear storage
+        return;
     }
-}
 
-//login Button Clicked
-function authorizeUser(){
-    const userEmail = document.getElementById('email_Field').value;
-    const userPassword = document.getElementById('password_Field').value;
+    let days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+    let hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    let minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+    let seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
 
-    // Construct the API URL with the credentials
-    const apiUrl = `https://api1.simplyworkcrm.com/api:C7JSXBeF/auth/login?email=${userEmail}&password=${userPassword}`;
-
-    // Send the data using a GET request (if required by API)
-    fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    })
-    .then((response) => {
-        if (!response.ok) {
-            throw new Error(`Error: ${response.status}`);
-        }
-        return response.json();
-    })
-    .then((data) => {
-        console.log('Login successful:', data);
-        alert('Login successful!');
-        // Handle successful login response (e.g., redirect or save token)
-        window.location.href = "file:///C:/Users/z/Desktop/GitImomoka/vipa-portal-bootstrap/pages/empty.html"; 
-        localStorage.setItem("access_token",data.access_token);
-        let initialTime = Math.floor(data.exp - data.iat);
-        localStorage.setItem("timeLeft",initialTime);
-        persistentTimer(initialTime);
-    })
-    .catch((error) => {
-        console.error('Error during login:', error);
-        alert('Login failed. Please try again.');
-        
-    });
-}
-
-function persistentTimer(timeLeft){
-    if(timeLeft <=100000){
-        alert("Looks like you've been offline. Please login again");
-    }
-    timeLeft -=1000;
-    localStorage.setItem("timeLeft",timeLeft);
-}
-
-function authRefresh(expiration){
+    document.getElementById("timerReflector").innerHTML = 
+        `${days}d ${hours}h ${minutes}m ${seconds}s`;
 
 }
 
+setInterval(updateCountdown, 1000); // Update every second
+ // Initial call
