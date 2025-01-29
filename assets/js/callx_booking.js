@@ -29,6 +29,8 @@ window.addEventListener("DOMContentLoaded", (event) => {
     }
 });
 
+
+
 // Run automatically on page load if NPN exists in localStorage
 document.addEventListener("DOMContentLoaded", () => {
     const storedNpn = localStorage.getItem("npn");
@@ -62,7 +64,7 @@ function fetchAgentData(npn){
                     localStorage.clear("npn");
                     let locID_auth = new bootstrap.Modal(document.getElementById('locationID_authorize_error'), {});
                     locID_auth.show();
-                } else if (data[0].agent_name) {
+                } else if (data[0]) {
     
                     // Display agent name if valid response
                     document.getElementById("callx_user").textContent = data[0].agent_name;
@@ -76,7 +78,23 @@ function fetchAgentData(npn){
                     fetchAvailsched(npn);
                     fetchPersRes(npn);
                     fetchAllRes(npn);
-                } else {
+                }
+                else if (data.agent_name) {
+    
+                        // Display agent name if valid response
+                        document.getElementById("callx_user").textContent = data.agent_name;
+                        document.getElementById("error_message").textContent = ""; // Clear any previous error
+                        document.getElementById('user_type').textContent = data.user_type;
+                        document.getElementById('npn_id').textContent = npn;
+                        document.getElementById('booking_content').classList.remove("d-none");
+                        document.getElementById('page-npn-authenticate').classList.add("d-none");
+                        localStorage.setItem("npn",npn);
+                        localStorage.setItem("access",data.user_type)
+                        fetchAvailsched(npn);
+                        fetchPersRes(npn);
+                        fetchAllRes(npn);
+                }
+                else {
                     // Handle unexpected response format
                     document.getElementById("error_message").textContent = "Unexpected response received.";
                     document.getElementById("callx_user").textContent = "";
@@ -351,7 +369,7 @@ function fetchPersRes(npn){
         redirect: "follow"
         };
     
-        fetch(`https://api1.simplyworkcrm.com/api:Y0n8xNqT/bookings/calls/schedules?limit=10&npn=${npn}&view_all=false&from_today=true&groups[logic]=string&groups[conditions][field]=string&groups[conditions][op]=string&groups[conditions][value]=string`, requestOptions)
+        fetch(`https://api1.simplyworkcrm.com/api:Y0n8xNqT/bookings/calls/schedules?limit=100&npn=${npn}&view_all=false&from_today=true&groups[logic]=string&groups[conditions][field]=string&groups[conditions][op]=string&groups[conditions][value]=string`, requestOptions)
             .then(response => response.json()) // Convert response to JSON
             .then(data => {
                 console.log(data); // Log the full response for debugging
