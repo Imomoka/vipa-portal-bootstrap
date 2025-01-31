@@ -1,41 +1,75 @@
-//declare values for sign-in page
-window.addEventListener("DOMContentLoaded", ()=>{
-    updateCountdown();
+
+document.addEventListener("DOMContentLoaded", () => {
+    //Login content
+    //show password Toggle
+   //declare show password toggle
+   const showPasswordToggle = document.getElementById('showPassword');
+   //declare password field
+   const passwordField = document.getElementById('password_Field');   
+   //add event change on showPassword Toggle
+   if(showPasswordToggle){
+       showPasswordToggle.addEventListener('change',changePasswordinputType);
+       //check toggle state
+        changePasswordinputType();
+   }else{
+    //do nothing
+   }
+   //check showPassword Toggle state
+    function changePasswordinputType(){
+        //passwordToggle = document.getElementById('showPassword');
+        //const passwordField = document.getElementById('password_Field');
+        if(showPasswordToggle.checked){
+            passwordField.type='text';
+        }
+        else{
+            passwordField.type = 'password';
+        }
+    }
+
+    //declare login button
+    const loginButton = document.getElementById('loginButton');
+    if(loginButton){
+        loginButton.addEventListener('click',authorizeUser);
+    }else{}
+    //login Button Clicked
+
 });
+    
+    
+const API_BASE_URL = "https://api1.simplyworkcrm.com/api:C7JSXBeF/auth";
 
+/**
+* Logs in the user and stores the access token.
+*/
+async function authorizeUser() {
+    const userEmail = document.getElementById('email_Field').value;
+    const userPassword = document.getElementById('password_Field').value;
 
+    try {
+        const response = await fetch(`${API_BASE_URL}/login`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ email: userEmail, password: userPassword }),
+            credentials: "include" // Ensures cookies are sent/received
+        });
 
-const initialtime = 60000;
+        if (!response.ok) {
+            throw new Error(`Login failed: ${response.status}`);
+        }
 
+        const data = await response.json();
+        console.log("Login successful:", data);
 
-function getEndTime() {
-    let endTime = localStorage.getItem(STORAGE_KEY);
-    if (!endTime) {
-        endTime = Date.now() + TOTAL_TIME; // Set future timestamp
-        localStorage.setItem(STORAGE_KEY, endTime);
+        // Store the access token
+        localStorage.setItem("access_token", data.access_token);
+
+        // Redirect the user after login
+        window.location.href = "/empty";
+        
+    } catch (error) {
+        console.error("Error during login:", error);
+        alert("Login failed. Please try again.");
     }
-    return parseInt(endTime);
 }
-
-function updateCountdown() {
-    const endTime = getEndTime();
-    let timeLeft = endTime - Date.now(); // Calculate remaining time
-
-    if (timeLeft <= 0) {
-        document.getElementById("countdown").innerHTML = "Time's up!";
-        localStorage.removeItem(STORAGE_KEY); // Clear storage
-        return;
-    }
-
-    let days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-    let hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    let minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-    let seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
-
-    document.getElementById("timerReflector").innerHTML = 
-        `${days}d ${hours}h ${minutes}m ${seconds}s`;
-
-}
-
-setInterval(updateCountdown, 1000); // Update every second
- // Initial call
