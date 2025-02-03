@@ -614,7 +614,6 @@ function toggleSidenav() {
 
   } else {
     body.classList.add(className);
-    sidenav.classList.add('bg-white');
     sidenav.classList.remove('bg-transparent');
     iconSidenav.classList.remove('d-none');
   }
@@ -632,10 +631,10 @@ if (sidenav) {
       if (referenceButtons?.classList.contains('active') && referenceButtons?.getAttribute('data-class') === 'bg-transparent') {
         sidenav.classList.remove('bg-white');
       } else {
-        sidenav.classList.add('bg-white');
+        sidenav.classList.add('bg-dark');
       }
     } else {
-      sidenav.classList.add('bg-white');
+      sidenav.classList.add('bg-dark');
       sidenav.classList.remove('bg-transparent');
     }
   }

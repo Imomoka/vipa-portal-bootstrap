@@ -22,26 +22,24 @@
   <title>VIPA Portal</title>
 </head>
 
-<body class="g-sidenav-show  bg-gray-100">
-  <aside class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3 bg-white" id="sidenav-main">
+<body class="g-sidenav-show  bg-black">
+  <aside class="sidenav navbar navbar-vertical navbar-expand-xs border-0 fixed-start bg-dark" id="sidenav-main">
     <!-- Sidebar Header -->
     <div class="sidenav-header d-flex justify-content-center">
       <i class="fas fa-times p-3 cursor-pointer text-secondary opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
       <a class="navbar-brand m-0" href=" https://demos.creative-tim.com/soft-ui-dashboard/pages/dashboard.html " target="_blank">
         <img src="assets/img/vipa-icon.png" class="navbar-brand-img h-100" alt="main_logo">
-        <span class="ms-1 font-weight-bold">VIPA PORTAL</span>
+        <span class="ms-1 font-weight-bold text-light">VIPA PORTAL</span>
       </a>
     </div>
-    <div class="d-flex justify-content-center mb-2">
-      <button id="#" type="button" class="btn bg-gradient-primary mb-0">Submit a sale <i class="fa fa-arrow-circle-right text-light" aria-hidden="true"></i></button>
-    </div>
+    
     
     <hr class="horizontal dark mt-0">
 
     <div class="collapse navbar-collapse  w-auto " id="sidenav-collapse-main">
       <ul class="navbar-nav">
         <li class="nav-item">
-          <a class="nav-link  active" href="#">
+          <a class="nav-link active" href="#">
             <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
               <svg width="12px" height="12px" viewBox="0 0 45 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <title>shop </title>
@@ -61,7 +59,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link  " href="pages/tables.html">
+          <a class="nav-link text-light" href="pages/tables.html">
             <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
               <svg width="12px" height="12px" viewBox="0 0 42 42" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <title>office</title>
@@ -81,7 +79,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="pages/billing.html">
+          <a class="nav-link text-light" href="pages/billing.html">
             <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
               <svg width="12px" height="12px" viewBox="0 0 43 36" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <title>credit-card</title>
@@ -143,11 +141,11 @@
           </a>
         </li> -->
         <li class="nav-item mt-3">
-          <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Settings</h6>
+          <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder text-light">Settings</h6>
         </li>
         
         <li class="nav-item">
-          <a class="nav-link  " href="pages/account.html">
+          <a class="nav-link text-light" href="pages/account.html">
             <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
               <i class="fa fa-user-circle text-dark text-gradient text-lg top-0" aria-hidden="true"></i>
             </div>
@@ -201,24 +199,173 @@
       <div class="container-fluid py-1 px-3">
         <!-- Page Title -->
         <div>
-          <h6 id="contentTitle" class="font-weight-bolder mb-0">Dashboard</h6>
+          <h6 id="contentTitle" class="font-weight-bolder text-light mb-0">Dashboard</h6>
         </div>
 
         <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
           <div class="ms-md-auto pe-md-3 d-flex align-items-center">
             
           </div>
-          <ul class="navbar-nav  justify-content-end">
+          <ul class="navbar-nav  justify-content-end align-items-center">
             <li class="nav-item d-flex align-items-center">
               <div class="avatar avatar-xl position-relative me-3">
                 <img src="assets/img/user_empty.jpg" alt="profile_image" class="w-50 border-radius-lg shadow-sm">
             </div>
             </li>
+            <li>
+              <div class="nav-item d-flex justify-content-center">
+                <button type="button" class="btn bg-gradient-primary mb-0" data-bs-toggle="modal" data-bs-target="#submitsaleModal">Add new record <i class="fa fa-pencil-square" aria-hidden="true"></i></button>
+                <!-- submit sale Modal -->
+                <div class="modal fade" id="submitsaleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title text-sm" id="exampleModalLabel">Create an inventory record</h5>
+                        <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <form>
+                          <div class="row">
+                            <!--Contact Information-->
+                            <div class="col-md-6 p-4">
+                              <p class="text-xs text-bold">Contact Information</p>
+                              <div>
+                                <div class="col-md-4 mb-2">
+                                  <!--lead type-->
+                                  <div class="form-group mb-0">
+                                    <label for="pmsLeadType" class="text-xxs m-0">Lead Type</label>
+                                    <select class="form-control form-control-sm" id="pmsLeadType">
+                                        <option value="" selected disabled>Please select</option>
+                                        <option>General</option>
+                                        <option>Final Expense</option>
+                                        <option>Mortgage</option>
+                                        <option>IUL</option>
+                                        <option>Annuity</option>
+                                        <option>Annual Review</option>
+                                        <option>Other</option>
+                                    </select>
+                                  </div>
+                                </div>
+                              </div>
+                              
+                              <div class="row d-flex align-items-center mb-2">
+                                <div class="col-md-6">
+                                  <!--first name-->
+                                  <div class="form-group mb-0">
+                                    <label for="pmsFirstName" class="text-xxs m-0">First Name</label>
+                                    <input type="text" class="form-control form-control-sm" id="pmsFirstName">
+                                  </div>
+                                </div>
+                                <div class="col-md-6">
+                                  <!--last name-->
+                                  <div class="form-group mb-0">
+                                    <label for="pmsLastName" class="text-xxs m-0">Last Name</label>
+                                    <input type="text" class="form-control form-control-sm" id="pmsLastName">
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="row d-flex align-items-center">
+                                <div class="col-md-6">
+                                  <!--Phone-->
+                                  <div class="form-group mb-0">
+                                    <label for="pmsPhone" class="text-xxs m-0">Phone</label>
+                                    <input type="tel" class="form-control form-control-sm" id="pmsPhone" pattern="^\d{4}-\d{3}-\d{4}$" required>
+                                  </div>
+                                </div>
+                                <div class="col-md-6">
+                                  <!--email-->
+                                  <div class="form-group mb-0">
+                                    <label for="pmsEmail" class="text-xxs m-0">Email</label>
+                                    <input type="email" class="form-control form-control-sm" id="pmsEmail">
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            <!--Policy Information-->
+                            <div class="col-md-6 row">
+                              <div class="col-md-6">
+                                <!--lead type-->
+                                <div class="form-group">
+                                  <label for="pmsLeadType">Lead Type</label>
+                                  <select class="form-control form-select" id="pmsLeadType">
+                                      <option value="" selected disabled>Please select</option>
+                                      <option>General</option>
+                                      <option>Final Expense</option>
+                                      <option>Mortgage</option>
+                                      <option>IUL</option>
+                                      <option>Annuity</option>
+                                      <option>Annual Review</option>
+                                      <option>Other</option>
+                                  </select>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            
+                          </div>
+                            
+                        
+                          <div class="row">
+                            <div class="col-md-6">
+                              
+                              <div class="form-group">
+                                <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com">
+                              </div>
+                            </div>
+                            <div class="col-md-6">
+                              <div class="form-group">
+                                <input type="text" placeholder="Regular" class="form-control" disabled />
+                              </div>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-md-6">
+                              <div class="form-group">
+                                <div class="input-group mb-4">
+                                  <span class="input-group-text"><i class="ni ni-zoom-split-in"></i></span>
+                                  <input class="form-control" placeholder="Search" type="text">
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-md-6">
+                              <div class="form-group">
+                                <div class="input-group mb-4">
+                                  <input class="form-control" placeholder="Birthday" type="text">
+                                  <span class="input-group-text"><i class="ni ni-zoom-split-in"></i></span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-md-6">
+                              <div class="form-group has-success">
+                                <input type="text" placeholder="Success" class="form-control is-valid" />
+                              </div>
+                            </div>
+                            <div class="col-md-6">
+                              <div class="form-group has-danger">
+                                <input type="email" placeholder="Error Input" class="form-control is-invalid" />
+                              </div>
+                            </div>
+                          </div>
+                        </form>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn bg-gradient-primary">Create Record</button>
+                        <button type="button" class="btn btn-link  ml-auto" data-bs-dismiss="modal">Close</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
 
             <li id="logoutBtn" class="nav-item d-flex align-items-center">
               <a href="javascript:;" class="nav-link text-body font-weight-bold px-0">
-                <i class="fa fa-user me-sm-1"></i>
-                <span class="d-sm-inline d-none">Logout</span>
+                <i class="fa fa-sign-out mx-3 text-lg" data-bs-toggle="tooltip" data-placement="bottom" title="Sign Out"></i>
               </a>
             </li>
             <!-- mobile open menu nav -->
@@ -438,7 +585,7 @@
                 <h6>Top 10 Producers</h6>
               </div>
               <div class="col-6 d-flex justify-content-end">
-                <button class="btn btn-outline-primary text-xs">
+                <button class="btn btn-outline-primary text-xxs">
                   Scoreboard <i class="fa fa-table" aria-hidden="true"></i>
                 </button>
               </div>
@@ -561,90 +708,17 @@
         </div>
         <!-- end Top producers -->
       </section>
-
-      
       <section  class="my-4">
-          <div class="row">
-            <!-- sales Record -->
-            <div class="col-9">
-              <div class="card mb-4">
-                <div class="card-header pb-0 d-flex flex-row justify-content-between align-items-center">
-                  <div class="col-6">
-                    <h6>Sales Record</h6>
-                  </div>
-                  <div class="col-2">
-                  
-                      <div class="dropdown text-end">
-                        <a href="javascript:;" class="cursor-pointer" id="dropdownUsers3" data-bs-toggle="dropdown" aria-expanded="false">
-                          <i class="fa fa-ellipsis-h text-dark"></i>
-                        </a>
-                        <ul class="dropdown-menu px-2 py-3" aria-labelledby="dropdownUsers3">
-                          <li><a class="dropdown-item border-radius-md" href="javascript:;">Action</a></li>
-                          <li><a class="dropdown-item border-radius-md" href="javascript:;">Another action</a></li>
-                          <li><a class="dropdown-item border-radius-md" href="javascript:;">Something else here</a></li>
-                        </ul>
-                      </div>
-
-                  </div>
+        <div class="row">
+          <!-- sales Record -->
+          <div class="col-9">
+            <div class="card mb-4">
+              <div class="card-header pb-0 d-flex flex-row justify-content-between align-items-center">
+                <div class="col-6">
+                  <h6>Sales Record</h6>
                 </div>
-                <div class="card-body px-0 pt-0 pb-2">
-                  <div class="table-responsive p-0">
-                    <table class="table align-items-center mb-0">
-                      <thead>
-                        <tr>
-                          <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Contact</th>
-                          <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Phone</th>
-                          <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
-                          <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Date Created</th>
-
-                          <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Last Updated</th>
-                          <th class="text-secondary opacity-7"></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td>
-                            <div class="d-flex px-2 py-1">
-                              <div class="d-flex flex-column justify-content-center">
-                                <h6 class="mb-0 text-sm">John Michael</h6>
-                                <p class="text-xs text-secondary mb-0">john@simplyworkcrm.com</p>
-                              </div>
-                            </div>
-                          </td>
-                          <td>
-                            <p class="text-xs font-weight-bold mb-0">(612) 225-5524</p>
-                          </td>
-                          <td class="align-middle text-center text-sm">
-                            <span class="badge badge-sm bg-gradient-danger">chargeback</span>
-                          </td>
-                          <td class="align-middle text-center">
-                            <span class="text-secondary text-xs font-weight-bold">23/04/18</span>
-                          </td>
-                          <td class="align-middle text-center">
-                            <span class="text-secondary text-xs font-weight-bold">23/04/18</span>
-                          </td>
-                          <td class="align-middle">
-                            <a href="javascript:;" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
-                              Edit
-                            </a>
-                          </td>
-                        </tr>
-                        
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <!--carrier graph-->
-            <div class="col-3">
-              <div class="card shadow h-100">
-                <div class="card-header pb-0 p-3 d-flex flex-row">
-                  <div class="col-6">
-                    <h6 class="mb-0 text-sm">Sales by carrier</h6>
-                  </div>
-                  
-                  <div class="col-6 d-flex justify-content-end">
+                <div class="col-2">
+                
                     <div class="dropdown text-end">
                       <a href="javascript:;" class="cursor-pointer" id="dropdownUsers3" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fa fa-ellipsis-h text-dark"></i>
@@ -655,65 +729,134 @@
                         <li><a class="dropdown-item border-radius-md" href="javascript:;">Something else here</a></li>
                       </ul>
                     </div>
-                  </div>
+
                 </div>
-                <div class="card-body pb-0 p-3">
-                  <div class="d-flex flex-row justify-content-between align-items-center">
-                    <div class="col-2">
-                      <div class="d-flex justify-content-center">
-                        <span class="text-xxs font-weight-normal text-dark opacity-7">PAID</span>
-                      </div>
-                      <div class="progress w-100" style="height:5px;" >
-                        <div class="progress-bar bg-grdient-primary w-100" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
-                      </div>
-                    </div>
-                    <div class="col-2">
-                      <div class="d-flex justify-content-center">
-                        <span class="text-xxs font-weight-normal text-dark opacity-7">SUBMITTED</span>
-                      </div>
-                      <div class="progress w-100" style="height:5px">
-                        <div class="progress-bar bg-gradient-success w-100" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
-                      </div>
-                    </div>
-                    <div class="col-2">
-                      <div class="d-flex justify-content-center">
-                        <span class="text-xxs font-weight-normal text-dark opacity-7">DECLINED</span>
-                      </div>
-                      <div class="progress w-100" style="height:5px">
-                        <div class="progress-bar bg-gradient-warning w-100" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
-                      </div>
-                    </div>
-                    <div class="col-2">
-                      <div class="d-flex justify-content-center">
-                        <span class="text-xxs font-weight-normal text-dark opacity-7">CHARGEBACK</span>
-                      </div>
-                      <div class="progress w-100" style="height:5px">
-                        <div class="progress-bar bg-gradient-danger w-100" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
-                      </div>
-                    </div>
-                  </div>
-                  <ul class="list-group mt-4">
-                    <li class="list-group-item border-0 d-flex align-items-center px-0 mb-0">
-                      <div class="w-100">
-                        <div class="d-flex mb-2">
-                          <span class="me-2 text-xs font-weight-bold text-dark">Mutual of Omaha</span>
-                        </div>
-                        <div>
-                          <div class="progress progress-md">
-                            <div class="progress-bar bg-primary w-80" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
+              <div class="card-body px-0 pt-0 pb-2">
+                <div class="table-responsive p-0">
+                  <table class="table align-items-center mb-0">
+                    <thead>
+                      <tr>
+                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Contact</th>
+                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Phone</th>
+                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
+                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Date Created</th>
+
+                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Last Updated</th>
+                        <th class="text-secondary opacity-7"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>
+                          <div class="d-flex px-2 py-1">
+                            <div class="d-flex flex-column justify-content-center">
+                              <h6 class="mb-0 text-sm">John Michael</h6>
+                              <p class="text-xs text-secondary mb-0">john@simplyworkcrm.com</p>
+                            </div>
                           </div>
-                        </div>
-                      </div>
-                    </li>
-                  </ul>
-                </div>  
-              </div>    
+                        </td>
+                        <td>
+                          <p class="text-xs font-weight-bold mb-0">(612) 225-5524</p>
+                        </td>
+                        <td class="align-middle text-center text-sm">
+                          <span class="badge badge-sm bg-gradient-danger">chargeback</span>
+                        </td>
+                        <td class="align-middle text-center">
+                          <span class="text-secondary text-xs font-weight-bold">23/04/18</span>
+                        </td>
+                        <td class="align-middle text-center">
+                          <span class="text-secondary text-xs font-weight-bold">23/04/18</span>
+                        </td>
+                        <td class="align-middle">
+                          <a href="javascript:;" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
+                            Edit
+                          </a>
+                        </td>
+                      </tr>
+                      
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </div>
           </div>
-      </section>
-      <!-- end sales record-->
-          
-      </div>
+          <!--carrier graph-->
+          <div class="col-3">
+            <div class="card shadow h-100">
+              <div class="card-header pb-0">
+                <div class="row d-flex align-items-center">
+                  <div class="col-lg-6 col-7">
+                    <h6>Sales by carriers</h6>
+
+                  </div>
+                  <div class="col-6 d-flex justify-content-end">
+                    <button class="btn btn-outline-primary text-xxs">
+                      View All <i class="fa fa-table" aria-hidden="true"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body pb-0 p-3">
+                <div class="d-flex flex-row justify-content-between align-items-center">
+                  <div class="col-2">
+                    <div class="d-flex justify-content-center">
+                      <span class="text-xxs font-weight-normal text-dark opacity-7">PAID</span>
+                    </div>
+                    <div class="progress w-100" style="height:5px;" >
+                      <div class="progress-bar bg-grdient-primary w-100" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                  </div>
+                  <div class="col-2">
+                    <div class="d-flex justify-content-center">
+                      <span class="text-xxs font-weight-normal text-dark opacity-7">SUBMITTED</span>
+                    </div>
+                    <div class="progress w-100" style="height:5px">
+                      <div class="progress-bar bg-gradient-success w-100" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                  </div>
+                  <div class="col-2">
+                    <div class="d-flex justify-content-center">
+                      <span class="text-xxs font-weight-normal text-dark opacity-7">DECLINED</span>
+                    </div>
+                    <div class="progress w-100" style="height:5px">
+                      <div class="progress-bar bg-gradient-info w-100" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                  </div>
+                  <div class="col-2">
+                    <div class="d-flex justify-content-center">
+                      <span class="text-xxs font-weight-normal text-dark opacity-7">CHARGEBACK</span>
+                    </div>
+                    <div class="progress w-100" style="height:5px">
+                      <div class="progress-bar bg-gradient-danger w-100" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                  </div>
+                </div>
+                <ul class="list-group mt-4">
+                  <li class="list-group-item border-0 d-flex align-items-center px-0 mb-0">
+                    <div class="w-100">
+                      <div class="d-flex mb-2">
+                        <span class="me-2 text-xs font-weight-bold text-dark">Mutual of Omaha</span>
+                      </div>
+                      <div>
+                        <div class="progress" >
+                          <div class="progress-bar bg-gradient-primary w-20 text-xxs" role="progressbar" data-bs-toggle="tooltip" data-placement="top" title="20%"></div>
+                          <div class="progress-bar bg-gradient-success w-40" role="progressbar" data-bs-toggle="tooltip" data-placement="top" title="40%"></div>
+                          <div class="progress-bar bg-gradient-info w-10" role="progressbar" data-bs-toggle="tooltip" data-placement="top" title="10%"></div>
+                          <div class="progress-bar bg-gradient-danger w-8" role="progressbar" data-bs-toggle="tooltip" data-placement="top" title="8%"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+              </div>  
+            </div>    
+          </div>
+        </div>
+    </section>
+      
+      
+      <!-- end sales record-->  
     </div>
 
     <footer class="footer pt-3  ">
